@@ -1,4 +1,4 @@
-# Instant Game Communication Demo
+# Instant Game Demo - Tic Tac Toe
 
 This demo contains code that demonstrates the more important types of interactions that an Instant Game client can have with backend services: sending/receiving payloads to Game Bot and saving/retrieving data to a custom backend.
 
@@ -7,7 +7,7 @@ This demo contains code that demonstrates the more important types of interactio
 To run this demo, you will need:
 1. Yarn ([Install Yarn](https://yarnpkg.com/en/docs/install))
 1. A Facebook App configured as an Instant Game. ([More information](https://developers.facebook.com/docs/games/instant-games/getting-started/game-setup))
-1. The [server-side counterpart](https://github.com/edgarjcfn/fbinstant-server) to this demo running in a cloud-based service, like Heroku, AWS or Google Cloud
+1. The [server-side counterpart](https://github.com/navdeepsingh/fbinstant-tictactoe-backend) to this demo running in a cloud-based service, like Heroku, AWS or Google Cloud
 
 ## Install dependencies 
 After checking out the code, run
