@@ -15,7 +15,7 @@
     "gulp-webserver": "^0.9.1",
     "gulp-zip": "^4.1.0",
     "html2canvas": "^1.0.0-alpha.10",
-    "open": "^0.0.5",
+    "open": "^6.0.0",
     "request": "^2.83.0"
   },
   "devDependencies": {
