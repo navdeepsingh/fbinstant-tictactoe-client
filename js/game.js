@@ -2,6 +2,8 @@ function gameplayScene(FBInstant, backendClient, html2canvas) {
     this._cells = [[], [], []];
     this._matchData = {};
     this.SPRITES = ['love', 'like'];
+    var sceneRoot = document.getElementById('scene');
+    var message = document.createElement('p');
 
     this.start = function () {
         this.makeGrid();
@@ -21,6 +23,9 @@ function gameplayScene(FBInstant, backendClient, html2canvas) {
             }.bind(this))
             .then(function (backendData) {
                 this.populateFromBackend(backendData);
+                if (this.isMatchWon()) {
+                    this.deleteFromBackend(backendData);
+                }
             }.bind(this))
             .catch(function (error) {
                 this.displayError(error);
@@ -54,6 +59,7 @@ function gameplayScene(FBInstant, backendClient, html2canvas) {
     this.populateFromBackend = function (matchData) {
         this._matchData = JSON.parse(matchData);
         var playerId = FBInstant.player.getID();
+        var playerName = FBInstant.player.getName();
         if (this._matchData.players.length == 1 && this._matchData.players[0] !== playerId) {
             // This player just accepted a challenge.
             // We need to persist their ID as the second player
@@ -75,15 +81,38 @@ function gameplayScene(FBInstant, backendClient, html2canvas) {
                 }
             }
         }
+
         if (this._matchData.playerTurn !== playerIndex) {
             console.log("It's not this player's turn, let's display a message");
-            var sceneRoot = document.getElementById('scene');
-            var message = document.createElement('p');
             message.appendChild(document.createTextNode('Please wait your turn.'));
             sceneRoot.insertBefore(message, sceneRoot.firstChild);
             this.disableAllCells();
         }
+    }
 
+    this.deleteFromBackend = (matchData) => {
+        var playerId = FBInstant.player.getID();
+        var playerName = FBInstant.player.getName();
+        message.innerHTML = document.createTextNode(playerName + ' has won!');
+        return new Promise(function (resolve, reject) {
+            console.log('going to delete', JSON.stringify(matchData));
+            FBInstant.player
+                .getSignedPlayerInfoAsync(JSON.stringify(matchData))
+                .then(function (result) {
+                    console.log(FBInstant.context.getID());
+
+                    return backendClient.delete(
+                        FBInstant.context.getID(),
+                        result.getSignature()
+                    )
+                })
+                .then(function () {
+                    resolve(matchData);
+                })
+                .catch(function (error) {
+                    reject(error);
+                })
+        });
     }
 
     this.createNewGameAsync = function () {
@@ -181,6 +210,8 @@ function gameplayScene(FBInstant, backendClient, html2canvas) {
 
         if (isMatchWon) {
             // Game over, player won
+            console.log("// Game over, player won");
+
             updateData =
             {
                 action: 'CUSTOM',
